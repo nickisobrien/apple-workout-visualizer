@@ -186,4 +186,71 @@ def average_cycle_speed_with_climb(db_conn):
     input()
     plt.close()
 
-average_cycle_speed_with_climb(db_conn)
+def plot_swim_speed(db_conn):
+    # Convert dates to a format that can be used in a mathematical formula, if not already done
+    df = load_swim_df(db_conn)
+
+    df['date_numeric'] = pd.to_datetime(df['startdate']).map(lambda date: date.toordinal())
+
+    # Calculate coefficients for the polynomial (we use a degree 1 polynomial here which is a line)
+    coefficients = np.polyfit(df['date_numeric'], df['speed'], 1)
+
+    # Create a range of x values for the dates
+    x_values = range(min(df['date_numeric']), max(df['date_numeric']))
+
+    # Calculate the corresponding y values for the trendline
+    y_values = [coefficients[0]*x + coefficients[1] for x in x_values]
+
+    plt.figure(figsize=(10,6))
+
+    # Plot the actual data
+    plt.plot_date(df['date_numeric'], df['speed'], 'b-', label='Swim')
+
+    # Plot the trendline
+    plt.plot_date(x_values, y_values, 'r-', label='Trendline')
+
+    plt.xlabel('Date')
+    plt.ylabel('Speed (yards per minute)')
+    plt.title('Speed over time for Swim with Trendline')
+    plt.legend()
+
+    plt.show(block=False)
+    plt.pause(1)
+    input()
+    plt.close()
+
+def plot_swim_efficiency(db_conn):
+    # Convert dates to a format that can be used in a mathematical formula, if not already done
+    df = load_swim_df(db_conn)
+
+    df['efficiency'] = df['distance_swimming'] / df['swimming_stroke_count']
+    df['date_numeric'] = pd.to_datetime(df['startdate']).map(lambda date: date.toordinal())
+
+    # Calculate coefficients for the polynomial (we use a degree 1 polynomial here which is a line)
+    coefficients = np.polyfit(df['date_numeric'], df['efficiency'], 1)
+
+    # Create a range of x values for the dates
+    x_values = range(min(df['date_numeric']), max(df['date_numeric']))
+
+    # Calculate the corresponding y values for the trendline
+    y_values = [coefficients[0]*x + coefficients[1] for x in x_values]
+
+    plt.figure(figsize=(10,6))
+
+    # Plot the actual data
+    plt.plot_date(df['date_numeric'], df['efficiency'], 'b-', label='Swim')
+
+    # Plot the trendline
+    plt.plot_date(x_values, y_values, 'r-', label='Trendline')
+
+    plt.xlabel('Date')
+    plt.ylabel('Efficiency (yards per stroke)')
+    plt.title('Efficiency over time for Swim with Trendline')
+    plt.legend()
+
+    plt.show(block=False)
+    plt.pause(1)
+    input()
+    plt.close()
+
+plot_swim_efficiency(db_conn)
