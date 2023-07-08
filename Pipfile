@@ -8,6 +8,7 @@ matplotlib = "*"
 pandas = "*"
 lxml = "*"
 psycopg2-binary = "*"
+seaborn = "*"
 
 [dev-packages]
 
