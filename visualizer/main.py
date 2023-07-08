@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.dates as mdates
 
 def db_get_connection():
     conn = psycopg2.connect(
@@ -77,8 +79,6 @@ def plot_weekly_workout_count(db_conn):
     swim_df = load_swim_df(db_conn)
     run_df = load_run_df(db_conn)
 
-    ## Plotting workout count
-
     swim_df['week'] = swim_df['startdate'].dt.isocalendar().week
     run_df['week'] = run_df['startdate'].dt.isocalendar().week
     cycle_df['week'] = cycle_df['startdate'].dt.isocalendar().week
@@ -147,3 +147,43 @@ def plot_cycle_speed(db_conn):
     plt.pause(1)
     input()
     plt.close()
+
+def average_cycle_speed_with_climb(db_conn):
+    df = load_outdoor_cycle_df(db_conn)
+
+    df['elevation_ascended_meters'] = df['elevation_ascended'] / 100
+    # Define bins for different ranges of elevation ascended
+    bins = [0, 500, 1000, 1500, 2000] # Adjust these values based on your specific data
+    labels = ['0-500', '500-1000', '1000-1500', '1500-2000']
+
+    # Create a new column in the DataFrame for the elevation category
+    df['elevation_category'] = pd.cut(df['elevation_ascended_meters'], bins=bins, labels=labels)
+
+    df['year'] = df['startdate'].dt.year
+    df['month'] = df['startdate'].dt.month
+
+    avg_speed_by_elevation_month = df.groupby(['month', 'elevation_category'])['speed'].mean()
+
+    plt.figure(figsize=(10, 6))
+
+    months = df['month'].sort_values().unique()
+
+    plt.figure(figsize=(10, 6))
+
+    for i, month in enumerate(months):
+        avg_speed = avg_speed_by_elevation_month[month]
+        plt.bar(np.arange(len(avg_speed)) + i * 0.2, avg_speed, width=0.2, label=str(month))
+
+    plt.xlabel('Elevation Ascended (m)')
+    plt.ylabel('Average Speed')
+    plt.xticks(ticks=np.arange(len(labels)), labels=labels)  # assuming labels from the previous example
+    plt.ylim([df['speed'].min()-1, df['speed'].max() + 1])
+    plt.legend(title='Month')
+    plt.title('Average Cycling Speed by Elevation Ascended and Month')
+
+    plt.show(block=False)
+    plt.pause(1)
+    input()
+    plt.close()
+
+average_cycle_speed_with_climb(db_conn)
