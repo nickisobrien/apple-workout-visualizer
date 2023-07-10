@@ -2,7 +2,7 @@ import psycopg2
 from lxml import etree
 
 # Parse the XML file
-tree = etree.parse('export.xml')
+tree = etree.parse('apple_health_export/export.xml')
 
 # Find all 'Workout' elements in the XML
 workouts = tree.xpath('//Workout')

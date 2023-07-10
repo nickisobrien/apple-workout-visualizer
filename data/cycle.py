@@ -3,7 +3,7 @@ from lxml import etree
 from datetime import datetime
 
 # Parse the XML file
-tree = etree.parse('export.xml')
+tree = etree.parse('apple_health_export/export.xml')
 
 # Find all 'Workout' elements in the XML
 workouts = tree.xpath('//Workout')
