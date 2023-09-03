@@ -104,6 +104,8 @@ def plot_weekly_workout_duration(db_conn):
     run_df['week'] = run_df['startdate'].dt.isocalendar().week
     cycle_df['week'] = cycle_df['startdate'].dt.isocalendar().week
 
+    print(swim_df['week'])
+
     plt.hist([swim_df['week'], run_df['week'], cycle_df['week']], bins=52, stacked=True, label=['Swim', 'Run', 'Cycle'], weights=[swim_df['duration'], run_df['duration'], cycle_df['duration']])
     plt.xlabel('Week of the year')
     plt.ylabel('Duration (minutes)')
@@ -253,4 +255,7 @@ def plot_swim_efficiency(db_conn):
     input()
     plt.close()
 
-plot_swim_efficiency(db_conn)
+# plot_swim_speed(db_conn)
+# average_cycle_speed_with_climb(db_conn)
+# plot_weekly_workout_count(db_conn)
+plot_weekly_workout_duration(db_conn)
